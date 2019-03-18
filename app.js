@@ -2,6 +2,11 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000
 
-app.get('/', (req, res) => res.send('<h1>Bounty Hunter API</h1>'))
+//Root route
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to the Bounty Hunter API'
+  });
+});
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(port, () => console.log(`Bounty Hunter API listening on port ${port}!`))
