@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/com2027/API/issues"
   },
-  "homepage": "https://github.com/com2027/API#readme"
+  "homepage": "https://github.com/com2027/API#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
 }
