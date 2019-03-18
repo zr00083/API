@@ -1,0 +1,23 @@
+{
+  "name": "bh-api",
+  "version": "1.0.0",
+  "description": "Web API for the bounty hunter backend",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/com2027/API.git"
+  },
+  "keywords": [
+    "API"
+  ],
+  "author": "Kieran Rigby",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/com2027/API/issues"
+  },
+  "homepage": "https://github.com/com2027/API#readme"
+}
