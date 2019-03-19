@@ -14,7 +14,8 @@ const app = express()
 //Root route with just a basic response to let people know this is the API
 app.get('/', (req, res) => {
   res.json({
-    message: 'Welcome to the Bounty Hunter API'
+    message: 'Welcome to the Bounty Hunter API',
+    status: 'We are in a meeting.'
   });
 });
 
