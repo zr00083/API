@@ -20,19 +20,9 @@ app.get('/', (req, res) => {
   });
 });
 
-
-app.get('/dbtest', (req, res) => {
-  const sequelize = new Sequelize({dialect: 'mysql'});
-  sequelize
-  .authenticate()
-  .then(() => {
-    res.status(200).send('Connection has been established successfully.');
-  })
-  .catch(err => {
-    res.status(500).send('Unable to connect to the database');
-  });
+app.get('*', function(req, res){
+  res.status(404).send({message:"Resource not found"});
 });
-
 
 //start express listening on the port and just log it to the console.
 app.listen(PORT, () => console.log(`Bounty Hunter API listening on port ${PORT}!`))
