@@ -29,7 +29,7 @@ app.get('/dbtest', (req, res) => {
     res.status(200).send('Connection has been established successfully.');
   })
   .catch(err => {
-    res.status(500).send('Unable to connect to the database:');
+    res.status(500).send('Unable to connect to the database');
   });
 });
 
