@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 
 
 app.get('/dbtest', (req, res) => {
-  const sequelize = new Sequelize({dialect: 'sqlite'});
+  const sequelize = new Sequelize({dialect: 'mysql'});
   sequelize
   .authenticate()
   .then(() => {
