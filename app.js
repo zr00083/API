@@ -8,8 +8,9 @@
 const PORT = process.env.PORT || 8080
 
 //Including the express app
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
+const Sequelize = require('sequelize');
 
 //Root route with just a basic response to let people know this is the API
 app.get('/', (req, res) => {
@@ -17,6 +18,10 @@ app.get('/', (req, res) => {
     message: 'Welcome to the Bounty Hunter API',
     status: 'We are in a meeting.'
   });
+});
+
+app.get('*', function(req, res){
+  res.status(404).send({message:"Resource not found"});
 });
 
 //start express listening on the port and just log it to the console.
