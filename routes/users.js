@@ -94,10 +94,10 @@ router.put('/:id', (req,res) => {
         //update the user
         users[0].update(req.body)
           .then((updatedUser) => { //if the user can be updated
-            res.status(200).json({user:updatedUser}); //send the response with the updated user
+            res.status(201).json({user:updatedUser}); //send the response with the updated user
           })
           .catch((err) => { //if the user can't be updated
-            res.status(500).json({error:error}); //send a response with the error message
+            res.status(500).json({error:"Unable to update user"}); //send a response with the error message
           })
       }else{ //if list is empty
         //return user not found error
@@ -108,12 +108,35 @@ router.put('/:id', (req,res) => {
 
 //Delete user route
 router.delete('/:id', (req,res) => {
-  res.status(200).json({route:"delete"});
+  //search for user in database where id is the id provided
+  db.User.findAll({where:{id:req.params.id}})
+    .then((users) => {
+      //if the list of users is not empty then
+      if(users.length > 0){
+        //try to delete user
+        users[0].destroy()
+          .then((deletedUser) => { //if the user can be deleted
+            res.status(200).json({user:deletedUser}); //send response with deleted user
+          })
+          .catch(() => { //if the user can't be deleted
+            res.status(500).json({error:"Unable to delete user"}); //send response with error message
+          })
+      }else{ //if list is empty
+        //return user not found error
+        res.status(404).json({error:"User not found"});
+      }
+    })
+
 });
 
 //Search user route
 router.get('/search/:username', (req,res) => {
   res.status(200).json({route:"search"});
+});
+
+//Search user route
+router.patch('/resetpassword/:id', (req,res) => {
+  res.status(200).json({route:"resetpassword"});
 });
 
 //ROUTES END HERE
