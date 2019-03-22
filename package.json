@@ -22,7 +22,9 @@
   },
   "homepage": "https://github.com/com2027/API#readme",
   "dependencies": {
+    "bcrypt": "^3.0.5",
     "express": "^4.16.4",
+    "jsonwebtoken": "^8.5.1",
     "mysql2": "^1.6.5",
     "nodemon": "^1.18.10",
     "sequelize": "^5.1.0",
