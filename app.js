@@ -10,7 +10,14 @@ const PORT = process.env.PORT || 8080
 //Including the express app
 const express = require('express');
 const app = express();
+//Including sequelize
 const Sequelize = require('sequelize');
+
+//Including routes
+const userRoutes = require('./routes/users');
+
+//Use routes
+app.use('/users/', userRoutes);
 
 //Root route with just a basic response to let people know this is the API
 app.get('/', (req, res) => {
