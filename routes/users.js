@@ -13,7 +13,6 @@ const jwt = require('jsonwebtoken');
 
 //Register user route
 router.post('/', (req,res) => {
-  console.log(req.body);
   //Try and hash the password
   bcrypt.hash(req.body.password, 10)
     //if able to hash password
@@ -43,7 +42,30 @@ router.post('/', (req,res) => {
 
 //Login user route
 router.post('/login', (req,res) => {
-    res.status(200).json({route:"login"});
+  //get all the users from the database where the username is the same as the user trying to log in
+  db.User.findAll({where:{username:req.body.username}})
+    .then((users) => {
+        //if the list of users return is not empty
+        if(users.length > 0){
+          //check the provided password against hashed password in database
+          bcrypt.compare(req.body.password, users[0].password)
+            .then((result) => {
+              //if the password matched
+              if(result){
+                //generate a 4 week JWT which stores the user's ID and uses the SECRET_KEY env variable or dev to sign.
+                const token = jwt.sign({id:users[0].id}, process.env.SECRET_KEY || 'dev', {expiresIn:'4 weeks'});
+                //send respose with token in
+                res.status(200).json({token:token});
+              }else{ //if the password did not match
+                //send incorrect password error
+                res.status(401).json({error:"Incorrect Password"});
+              }
+            });
+        }else{ //if the list of users returned is empty
+          //send incorrect username error
+          res.status(404).json({error:"Username not found"});
+        }
+    });
 });
 
 //Get user route
