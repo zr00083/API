@@ -10,11 +10,14 @@ const PORT = process.env.PORT || 8080
 //Including the express app
 const express = require('express');
 const app = express();
-//Including sequelize
-const Sequelize = require('sequelize');
 
 //Including routes
 const userRoutes = require('./routes/users');
+
+// to support JSON-encoded bodies
+app.use(express.json());
+// to support URL-encoded bodies
+app.use(express.urlencoded({extended:true}));
 
 //Use routes
 app.use('/users/', userRoutes);

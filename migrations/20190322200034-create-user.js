@@ -11,16 +11,19 @@ module.exports = {
       },
       firstName: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        validate: {notEmpty: true}
       },
       lastName: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        validate: {notEmpty: true}
       },
       username: {
         allowNull: false,
         type: Sequelize.STRING,
-        unique:true
+        unique:true,
+        validate: {notEmpty: true}
       },
       password: {
         allowNull: false,

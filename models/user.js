@@ -4,9 +4,9 @@ const uuid = require('uuid/v4');
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    firstName: { type: DataTypes.STRING, allowNull: false },
-    lastName: { type: DataTypes.STRING, allowNull: false },
-    username: { type: DataTypes.STRING, allowNull: false, unique:true },
+    firstName: { type: DataTypes.STRING, allowNull: false, validate: {notEmpty: true} },
+    lastName: { type: DataTypes.STRING, allowNull: false, validate: {notEmpty: true} },
+    username: { type: DataTypes.STRING, allowNull: false, unique:true, validate: {notEmpty: true} },
     password: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: false, unique:true, validate: {isEmail:true}},
     active: { type: DataTypes.BOOLEAN, allowNull:false, defaultValue: true },
