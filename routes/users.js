@@ -9,6 +9,9 @@ const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+//import useful middleware
+const checkAuth = require('../middleware/check-auth');
+
 //ROUTES BEGIN HERE
 ////////////////////////////////////////////////////
 
@@ -70,7 +73,7 @@ router.post('/login', (req,res) => {
 });
 
 //Get user route
-router.get('/:id', (req,res) => {
+router.get('/:id', checkAuth, (req,res) => {
   //search for user in database where the id is the id provided
   db.User.findAll({where:{id:req.params.id}})
     .then((users) => {
@@ -86,7 +89,7 @@ router.get('/:id', (req,res) => {
 });
 
 //Update user route
-router.put('/:id', (req,res) => {
+router.put('/:id', checkAuth, (req,res) => {
   //search for user in database where id is the id provided
   db.User.findAll({where:{id:req.params.id}})
     .then((users) => {
@@ -108,7 +111,7 @@ router.put('/:id', (req,res) => {
 });
 
 //Delete user route
-router.delete('/:id', (req,res) => {
+router.delete('/:id', checkAuth, (req,res) => {
   //search for user in database where id is the id provided
   db.User.findAll({where:{id:req.params.id}})
     .then((users) => {
@@ -131,7 +134,7 @@ router.delete('/:id', (req,res) => {
 });
 
 //Search user route
-router.get('/search/:username', (req,res) => {
+router.get('/search/:username', checkAuth, (req,res) => {
   //search for user in database where username is like the username provided
   db.User.findAll({where:{email:{[Sequelize.Op.like]:`%`+req.params.username+`%`}}})
     .then((users) => {
@@ -144,7 +147,7 @@ router.get('/search/:username', (req,res) => {
 });
 
 //Reset password route
-router.patch('/resetpassword/:id', (req,res) => {
+router.patch('/resetpassword/:id', checkAuth, (req,res) => {
   res.status(200).json({route:"resetpassword"});
 });
 
