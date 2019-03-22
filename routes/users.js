@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 //import the database models.
 const db = require('../models');
+const Sequelize = require('sequelize');
 
 //import bcrypt and jsonwebtoken
 const bcrypt = require('bcrypt');
@@ -116,7 +117,7 @@ router.delete('/:id', (req,res) => {
         //try to delete user
         users[0].destroy()
           .then((deletedUser) => { //if the user can be deleted
-            res.status(200).json({user:deletedUser}); //send response with deleted user
+            res.status(204).json({user:deletedUser}); //send response with deleted user
           })
           .catch(() => { //if the user can't be deleted
             res.status(500).json({error:"Unable to delete user"}); //send response with error message
@@ -131,10 +132,18 @@ router.delete('/:id', (req,res) => {
 
 //Search user route
 router.get('/search/:username', (req,res) => {
-  res.status(200).json({route:"search"});
+  //search for user in database where username is like the username provided
+  db.User.findAll({where:{email:{[Sequelize.Op.like]:`%`+req.params.username+`%`}}})
+    .then((users) => {
+      if(users.length > 0){ //if the users list is not empty
+        res.status(200).json({users:users}); //send response with users array
+      }else{ //if the users listis empty
+        res.status(404).json({error:"Users not found"}); //send 404 error no users exist
+      }
+    })
 });
 
-//Search user route
+//Reset password route
 router.patch('/resetpassword/:id', (req,res) => {
   res.status(200).json({route:"resetpassword"});
 });
