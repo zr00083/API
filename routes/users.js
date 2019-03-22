@@ -86,7 +86,24 @@ router.get('/:id', (req,res) => {
 
 //Update user route
 router.put('/:id', (req,res) => {
-  res.status(200).json({route:"update"});
+  //search for user in database where id is the id provided
+  db.User.findAll({where:{id:req.params.id}})
+    .then((users) => {
+      //if the list of users is not empty then
+      if(users.length > 0){
+        //update the user
+        users[0].update(req.body)
+          .then((updatedUser) => { //if the user can be updated
+            res.status(200).json({user:updatedUser}); //send the response with the updated user
+          })
+          .catch((err) => { //if the user can't be updated
+            res.status(500).json({error:error}); //send a response with the error message
+          })
+      }else{ //if list is empty
+        //return user not found error
+        res.status(404).json({error:"User not found"});
+      }
+    });
 });
 
 //Delete user route
