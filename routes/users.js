@@ -70,15 +70,18 @@ router.post('/login', (req,res) => {
 
 //Get user route
 router.get('/:id', (req,res) => {
+  //search for user in database where the id is the id provided
   db.User.findAll({where:{id:req.params.id}})
     .then((users) => {
+      //if the list of users is not empty then
       if(users.length > 0){
-        res.status(200).json({route:"get user by id"});
-      }else{
-        res.status(404).json({error:"no users!"});
+        //return the user
+        res.status(200).json({user:users[0]});
+      }else{ //if list is empty
+        //return user not found error
+        res.status(404).json({error:"User not found"});
       }
-    })
-
+    });
 });
 
 //Update user route
