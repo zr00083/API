@@ -188,21 +188,45 @@ router.get('/:id', checkAuth, (req,res) => {
     })
 });
 
+//Search user route
+router.get('/search/:username', checkAuth, (req,res) => {
+  //search for user in database where username is like the username provided
+  db.User.findAll({where:{username:{[Sequelize.Op.like]:`%`+req.params.username+`%`}}})
+    .then((users) => {
+      if(users.length > 0){ //if the users list is not empty
+        res.status(200).json({users:users}); //send response with users array
+      }else{ //if the users listis empty
+        res.status(404).json({error:"Users not found"}); //send 404 error no users exist
+      }
+    })
+    .catch(() => {
+        res.status(500).json({error: "DB error"});
+    })
+});
+
+
+
 //Update user route
 router.put('/:id', checkAuth, checkUserMatch, (req,res) => {
+  console.log(req.body.password);
   //search for user in database where id is the id provided
   db.User.findAll({where:{id:req.params.id}})
     .then((users) => {
       //if the list of users is not empty then
       if(users.length > 0){
-        //update the user
-        users[0].update(req.body)
-          .then((updatedUser) => { //if the user can be updated
-            res.status(201).json({user:updatedUser}); //send the response with the updated user
-          })
-          .catch((err) => { //if the user can't be updated
-            res.status(500).json({error:"Unable to update user"}); //send a response with the error message
-          })
+        //check if the user is trying to update their password
+        if(typeof req.body.password !== 'undefined' || typeof req.body.id !== 'undefined' || typeof req.body.createdAt !== 'undefined' || typeof req.body.updatedAt !== 'undefined' || typeof req.body.active !== 'undefined' || typeof req.body.verified !== 'undefined'){
+          res.status(400).json({message:"Cannot update that field"}); //send the response with the updated user
+        }else{ //if user is not trying to update their password
+          //update the user without worrying about the password
+          users[0].update(req.body)
+            .then((updatedUser) => { //if the user can be updated
+              res.status(201).json({user:updatedUser}); //send the response with the updated user
+            })
+            .catch((err) => { //if the user can't be updated
+              res.status(500).json({error:"Unable to update user"}); //send a response with the error message
+            })
+        }
       }else{ //if list is empty
         //return user not found error
         res.status(404).json({error:"User not found"});
@@ -237,22 +261,6 @@ router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
         res.status(500).json({error: "DB error"});
     })
 
-});
-
-//Search user route
-router.get('/search/:username', checkAuth, (req,res) => {
-  //search for user in database where username is like the username provided
-  db.User.findAll({where:{username:{[Sequelize.Op.like]:`%`+req.params.username+`%`}}})
-    .then((users) => {
-      if(users.length > 0){ //if the users list is not empty
-        res.status(200).json({users:users}); //send response with users array
-      }else{ //if the users listis empty
-        res.status(404).json({error:"Users not found"}); //send 404 error no users exist
-      }
-    })
-    .catch(() => {
-        res.status(500).json({error: "DB error"});
-    })
 });
 
 
