@@ -12,6 +12,7 @@ const jwt = require('jsonwebtoken');
 
 //import useful middleware
 const checkAuth = require('../middleware/check-auth');
+const checkUserMatch = require('../middleware/check-matching-user');
 
 //ROUTES BEGIN HERE
 ////////////////////////////////////////////////////
@@ -99,7 +100,7 @@ router.get('/:id', checkAuth, (req,res) => {
 });
 
 //Update user route
-router.put('/:id', checkAuth, (req,res) => {
+router.put('/:id', checkAuth, checkUserMatch, (req,res) => {
   //search for user in database where id is the id provided
   db.User.findAll({where:{id:req.params.id}})
     .then((users) => {
@@ -124,7 +125,7 @@ router.put('/:id', checkAuth, (req,res) => {
 });
 
 //Delete user route
-router.delete('/:id', checkAuth, (req,res) => {
+router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
   //search for user in database where id is the id provided
   db.User.findAll({where:{id:req.params.id}})
     .then((users) => {
