@@ -8,7 +8,7 @@ const Sequelize = require('sequelize');
 //import bcrypt and jsonwebtoken and nodemailer
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-// const mailer = require('../lib/mailer');
+const mailer = require('../lib/mailer');
 
 //import useful middleware
 const checkAuth = require('../middleware/check-auth');
@@ -79,6 +79,78 @@ router.post('/login', (req,res) => {
         res.status(500).json({error: "DB error"});
     })
 });
+
+//API route for server to check email for password reset
+router.post('/resetpassword', (req,res) => {
+  const BASE_URL = req.protocol + "://" + req.get('host') + "/";
+  //check if user exists
+  db.User.findAll({where:{email:req.body.email}})
+    .then((users) => {
+      //if user exists
+      if(users.length > 0){
+        //generate a jwt valid for 15 minutes
+        const token = jwt.sign({id:users[0].id,pw_reset:true}, process.env.SECRET_KEY || 'dev', { expiresIn:'15m' });
+        const url = BASE_URL + "users/resetpassword?token="+token;
+        //send an email to user with link containing token
+        if(!mailer.sendMail("info@bountyhunt.me",req.body.email,"Test Subject", "Your url is " + url, true, "<a href='"+url+"'>Reset your password</a>")){
+          res.status(200).json({message: "Password reset sent to email"});
+        }else{
+          res.status(500).json({message: "Unable to send email"});
+        }
+      }else{ //if user doesn't exist
+        res.status(404).json({error:"User not found"});//throw 404 error
+      }
+    });
+});
+
+//UI Route for user to reset password
+router.get('/resetpassword', (req,res) => {
+  //attempt to verify token
+  try{ //if verifiable
+    const token = req.query.token;
+    const decoded = jwt.verify(token, process.env.SECRET_KEY || 'dev');
+    //render a reset password form
+    res.status(200).json({message:"Token is good."})
+  }catch(err){//if not verifiable
+    res.status(401).json({error:"Invalid token"}); //display invalid token message
+  }
+});
+
+router.post('/resetpassword/:token', (req,res) => {
+  //attempt to verify token
+  try{ //if verifiable
+    const token = req.params.token;
+    const decoded = jwt.verify(token, process.env.SECRET_KEY || 'dev');
+    //try and hash the new password
+    bcrypt.hash(req.body.newpassword, 10)
+      .then((hash) => { //if hashable
+        //find the user in the database using the decoded JWT
+        db.User.findAll({where: {id: decoded.id}})
+          .then((users) => {
+            //Check if the user exists
+            if(users.length > 0){
+              //if the user exists then update the hashed password in the database
+              users[0].update({password:hash});
+              //send the success response
+              res.status(200).json({message:"Password reset"});
+            }else{ //if user is not found
+              //send a 404 error
+              res.status(404).json({error:"User not found"});
+            }
+          })
+          .catch(() => { // If db throws an error then handle it
+            res.status(500).json({error:"Unable to connect to DB"});
+          })
+      })
+      .catch(() => { //if we can't hash the new password
+        res.status(500).json({error:"Unable to set new password"});
+      });
+  }catch(err){ //if the token could not be verified
+    res.status(401).json({error:"Invalid token"});
+  }
+});
+
+
 
 //Get user route
 router.get('/:id', checkAuth, (req,res) => {
@@ -166,43 +238,7 @@ router.get('/search/:username', checkAuth, (req,res) => {
     })
 });
 
-//API route for server to check email for password reset
-router.post('/resetpassword/:email', checkAuth, (req,res) => {
-  //check if user exists
-  // db.User.findAll({where:{email:req.params.email}})
-  //   .then((users) => {
-  //     //if user exists
-  //     if(users.length > 0){
-  //       //generate a jwt valid for 15 minutes
-  //       const token = jwt.sign({id:users[0].id}, process.env.SECRET_KEY || 'dev', { expiresIn:'15m' });
-  //       //send an email to user with link containing token
-  //
-  //
-  //
-  //     }else{ //if user doesn't exist
-  //       res.status(404).json({error:"User not found"});//throw 404 error
-  //     }
-  //   });
-});
 
-//UI Route for user to reset password
-router.get('/resetpassword/:token', checkAuth, (req,res) => {
-  //attempt to verify token
-    //if verifiable
-      //render a reset password form
-    //if not verifiable
-      //display an error
-  res.status(200).json({route:"resetpassword"});
-});
-
-router.post('/resetpassword/:token', checkAuth, (req,res) => {
-  //attempt to verify token
-    //if verifiable
-      //reset user's password
-    //if not verifiable
-      //display an error
-  res.status(200).json({route:"resetpassword"});
-});
 
 
 
