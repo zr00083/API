@@ -5,9 +5,10 @@ const router = express.Router();
 const db = require('../models');
 const Sequelize = require('sequelize');
 
-//import bcrypt and jsonwebtoken
+//import bcrypt and jsonwebtoken and nodemailer
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const mailer = require('../lib/mailer');
 
 //import useful middleware
 const checkAuth = require('../middleware/check-auth');
@@ -41,7 +42,10 @@ router.post('/', (req,res) => {
           //send response with error information
           res.status(500).json({error: err});
         });
-    });
+    })
+    .catch((err) => {
+        res.status(500).json({BCryptError: err});
+    })
 });
 
 //Login user route
@@ -69,7 +73,10 @@ router.post('/login', (req,res) => {
           //send incorrect username error
           res.status(404).json({error:"Username not found"});
         }
-    });
+    })
+    .catch(() => {
+        res.status(500).json({error: "DB error"});
+    })
 });
 
 //Get user route
@@ -85,7 +92,10 @@ router.get('/:id', checkAuth, (req,res) => {
         //return user not found error
         res.status(404).json({error:"User not found"});
       }
-    });
+    })
+    .catch(() => {
+        res.status(500).json({error: "DB error"});
+    })
 });
 
 //Update user route
@@ -107,7 +117,10 @@ router.put('/:id', checkAuth, (req,res) => {
         //return user not found error
         res.status(404).json({error:"User not found"});
       }
-    });
+    })
+    .catch(() => {
+        res.status(500).json({error: "DB error"});
+    })
 });
 
 //Delete user route
@@ -130,6 +143,9 @@ router.delete('/:id', checkAuth, (req,res) => {
         res.status(404).json({error:"User not found"});
       }
     })
+    .catch(() => {
+        res.status(500).json({error: "DB error"});
+    })
 
 });
 
@@ -144,17 +160,28 @@ router.get('/search/:username', checkAuth, (req,res) => {
         res.status(404).json({error:"Users not found"}); //send 404 error no users exist
       }
     })
+    .catch(() => {
+        res.status(500).json({error: "DB error"});
+    })
 });
 
 //API route for server to check email for password reset
 router.post('/resetpassword/:email', checkAuth, (req,res) => {
   //check if user exists
-    //if user exists
-      //generate a jwt valid for 15 minutes
-      //send an email to user with link containing token
-    //if user doesn't exist
-      //throw 404 error
-  res.status(200).json({route:"resetpassword"});
+  // db.User.findAll({where:{email:req.params.email}})
+  //   .then((users) => {
+  //     //if user exists
+  //     if(users.length > 0){
+  //       //generate a jwt valid for 15 minutes
+  //       const token = jwt.sign({id:users[0].id}, process.env.SECRET_KEY || 'dev', { expiresIn:'15m' });
+  //       //send an email to user with link containing token
+  //
+  //
+  //
+  //     }else{ //if user doesn't exist
+  //       res.status(404).json({error:"User not found"});//throw 404 error
+  //     }
+  //   });
 });
 
 //UI Route for user to reset password
