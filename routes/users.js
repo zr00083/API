@@ -151,6 +151,24 @@ router.post('/resetpassword/:token', (req,res) => {
 });
 
 
+//Get me route
+router.get('/me', checkAuth, (req,res) => {
+  //search for user in database where the id is the id provided
+  db.User.findAll({where:{id:req.userData.id}})
+    .then((users) => {
+      //if the list of users is not empty then
+      if(users.length > 0){
+        //return the user
+        res.status(200).json({user:users[0]});
+      }else{ //if list is empty
+        //return user not found error
+        res.status(404).json({error:"User not found"});
+      }
+    })
+    .catch(() => {
+        res.status(500).json({error: "DB error"});
+    })
+});
 
 //Get user route
 router.get('/:id', checkAuth, (req,res) => {
@@ -170,6 +188,25 @@ router.get('/:id', checkAuth, (req,res) => {
         res.status(500).json({error: "DB error"});
     })
 });
+
+
+//Search user route
+router.get('/search/:username', checkAuth, (req,res) => {
+  //search for user in database where username is like the username provided
+  db.User.findAll({where:{username:{[Sequelize.Op.like]:`%`+req.params.username+`%`}}})
+    .then((users) => {
+      if(users.length > 0){ //if the users list is not empty
+        res.status(200).json({users:users}); //send response with users array
+      }else{ //if the users listis empty
+        res.status(404).json({error:"Users not found"}); //send 404 error no users exist
+      }
+    })
+    .catch(() => {
+        res.status(500).json({error: "DB error"});
+    })
+});
+
+
 
 //Update user route
 router.put('/:id', checkAuth, checkUserMatch, (req,res) => {
@@ -221,25 +258,6 @@ router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
     })
 
 });
-
-//Search user route
-router.get('/search/:username', checkAuth, (req,res) => {
-  //search for user in database where username is like the username provided
-  db.User.findAll({where:{username:{[Sequelize.Op.like]:`%`+req.params.username+`%`}}})
-    .then((users) => {
-      if(users.length > 0){ //if the users list is not empty
-        res.status(200).json({users:users}); //send response with users array
-      }else{ //if the users listis empty
-        res.status(404).json({error:"Users not found"}); //send 404 error no users exist
-      }
-    })
-    .catch(() => {
-        res.status(500).json({error: "DB error"});
-    })
-});
-
-
-
 
 
 //ROUTES END HERE
