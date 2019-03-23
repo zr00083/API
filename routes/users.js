@@ -8,7 +8,7 @@ const Sequelize = require('sequelize');
 //import bcrypt and jsonwebtoken and nodemailer
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const mailer = require('../lib/mailer');
+// const mailer = require('../lib/mailer');
 
 //import useful middleware
 const checkAuth = require('../middleware/check-auth');
