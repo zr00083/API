@@ -136,7 +136,7 @@ router.delete('/:id', checkAuth, (req,res) => {
 //Search user route
 router.get('/search/:username', checkAuth, (req,res) => {
   //search for user in database where username is like the username provided
-  db.User.findAll({where:{email:{[Sequelize.Op.like]:`%`+req.params.username+`%`}}})
+  db.User.findAll({where:{username:{[Sequelize.Op.like]:`%`+req.params.username+`%`}}})
     .then((users) => {
       if(users.length > 0){ //if the users list is not empty
         res.status(200).json({users:users}); //send response with users array
@@ -146,10 +146,37 @@ router.get('/search/:username', checkAuth, (req,res) => {
     })
 });
 
-//Reset password route
-router.patch('/resetpassword/:id', checkAuth, (req,res) => {
+//API route for server to check email for password reset
+router.post('/resetpassword/:email', checkAuth, (req,res) => {
+  //check if user exists
+    //if user exists
+      //generate a jwt valid for 15 minutes
+      //send an email to user with link containing token
+    //if user doesn't exist
+      //throw 404 error
   res.status(200).json({route:"resetpassword"});
 });
+
+//UI Route for user to reset password
+router.get('/resetpassword/:token', checkAuth, (req,res) => {
+  //attempt to verify token
+    //if verifiable
+      //render a reset password form
+    //if not verifiable
+      //display an error
+  res.status(200).json({route:"resetpassword"});
+});
+
+router.post('/resetpassword/:token', checkAuth, (req,res) => {
+  //attempt to verify token
+    //if verifiable
+      //reset user's password
+    //if not verifiable
+      //display an error
+  res.status(200).json({route:"resetpassword"});
+});
+
+
 
 //ROUTES END HERE
 ////////////////////////////////////////////////////
