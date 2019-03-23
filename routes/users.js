@@ -45,7 +45,7 @@ router.post('/', (req,res) => {
         });
     })
     .catch((err) => {
-        res.status(500).json({BCryptError: err});
+        res.status(500).json({error: "Unable to create user"});
     })
 });
 
@@ -69,7 +69,10 @@ router.post('/login', (req,res) => {
                 //send incorrect password error
                 res.status(401).json({error:"Incorrect Password"});
               }
-            });
+            })
+            .catch(() => {
+              res.status(500).json({error:"Unable to log user in"});
+            })
         }else{ //if the list of users returned is empty
           //send incorrect username error
           res.status(404).json({error:"Username not found"});
@@ -244,14 +247,25 @@ router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
     .then((users) => {
       //if the list of users is not empty then
       if(users.length > 0){
-        //try to delete user
-        users[0].destroy()
-          .then((deletedUser) => { //if the user can be deleted
-            res.status(204).json({user:deletedUser}); //send response with deleted user
+        //check the user has entered their password correctly
+        bcrypt.compare(req.body.password, users[0].password)
+          .then((result) => {
+            if(result){
+              //try to delete user
+              users[0].destroy()
+                .then((deletedUser) => { //if the user can be deleted
+                  res.status(204).json({user:deletedUser}); //send response with deleted user
+                })
+                .catch(() => { //if the user can't be deleted
+                  res.status(500).json({error:"Unable to delete user"}); //send response with error message
+                });
+            }else{ //if the user hasn't entered their password correctly
+              res.status(401).json({error:"Authorization failed"});
+            }
           })
-          .catch(() => { //if the user can't be deleted
-            res.status(500).json({error:"Unable to delete user"}); //send response with error message
-          })
+          .catch(() => { //if we can't hash the password
+            res.status(500).json({error:"Unable to delete user"});
+          });
       }else{ //if list is empty
         //return user not found error
         res.status(404).json({error:"User not found"});
