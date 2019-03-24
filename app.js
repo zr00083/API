@@ -19,6 +19,8 @@ app.use(express.json());
 // to support URL-encoded bodies
 app.use(express.urlencoded({extended:true}));
 
+app.use('/assets',express.static('assets/images'));
+
 //Use routes
 app.use('/users/', userRoutes);
 
