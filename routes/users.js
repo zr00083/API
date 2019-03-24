@@ -84,7 +84,7 @@ router.post('/login', (req,res) => {
 });
 
 //API route for server to check email for password reset
-router.post('/resetpassword', (req,res) => {
+router.patch('/resetpassword', (req,res) => {
   const BASE_URL = req.protocol + "://" + req.get('host') + "/";
   //check if user exists
   db.User.findAll({where:{email:req.body.email}})
@@ -109,15 +109,8 @@ router.post('/resetpassword', (req,res) => {
 
 //UI Route for user to reset password
 router.get('/resetpassword', (req,res) => {
-  //attempt to verify token
-  try{ //if verifiable
-    const token = req.query.token;
-    const decoded = jwt.verify(token, process.env.SECRET_KEY || 'dev');
     //render a reset password form
-    res.status(200).json({message:"Token is good."})
-  }catch(err){//if not verifiable
-    res.status(401).json({error:"Invalid token"}); //display invalid token message
-  }
+    res.render('resetpassword',{token: req.query.token});
 });
 
 router.post('/resetpassword/:token', (req,res) => {
@@ -139,7 +132,7 @@ router.post('/resetpassword/:token', (req,res) => {
               res.status(200).json({message:"Password reset"});
             }else{ //if user is not found
               //send a 404 error
-              res.status(404).json({error:"User not found"});
+              res.status(401).json({error:"User not found"});
             }
           })
           .catch(() => { // If db throws an error then handle it
