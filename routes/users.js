@@ -161,7 +161,7 @@ router.get('/me', checkAuth, (req,res) => {
       //if the list of users is not empty then
       if(users.length > 0){
         //return the user
-        res.status(200).json({user:users[0]});
+        res.status(200).json(users[0]);
       }else{ //if list is empty
         //return user not found error
         res.status(404).json({error:"User not found"});
@@ -180,7 +180,7 @@ router.get('/:id', checkAuth, (req,res) => {
       //if the list of users is not empty then
       if(users.length > 0){
         //return the user
-        res.status(200).json({user:users[0]});
+        res.status(200).json(users[0]);
       }else{ //if list is empty
         //return user not found error
         res.status(404).json({error:"User not found"});
@@ -224,7 +224,7 @@ router.put('/:id', checkAuth, checkUserMatch, (req,res) => {
           //update the user without worrying about the password
           users[0].update(req.body)
             .then((updatedUser) => { //if the user can be updated
-              res.status(201).json({user:updatedUser}); //send the response with the updated user
+              res.status(201).json(updatedUser); //send the response with the updated user
             })
             .catch((err) => { //if the user can't be updated
               res.status(500).json({error:"Unable to update user"}); //send a response with the error message
@@ -254,7 +254,7 @@ router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
               //try to delete user
               users[0].destroy()
                 .then((deletedUser) => { //if the user can be deleted
-                  res.status(204).json({user:deletedUser}); //send response with deleted user
+                  res.status(204).json(deletedUser); //send response with deleted user
                 })
                 .catch(() => { //if the user can't be deleted
                   res.status(500).json({error:"Unable to delete user"}); //send response with error message
