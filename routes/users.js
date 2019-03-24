@@ -94,8 +94,9 @@ router.post('/resetpassword', (req,res) => {
         //generate a jwt valid for 15 minutes
         const token = jwt.sign({id:users[0].id,pw_reset:true}, process.env.SECRET_KEY || 'dev', { expiresIn:'15m' });
         const url = BASE_URL + "users/resetpassword?token="+token;
+        const now = new Date();
         //send an email to user with link containing token
-        if(!mailer.sendMail("info@bountyhunt.me",req.body.email,"Test Subject", "Your url is " + url, true, "<a href='"+url+"'>Reset your password</a>")){
+        if(!mailer.sendMail("Bounty Hunter <info@bountyhunt.me>",req.body.email,"Reset your password", "Your url is " + url, false, "./assets/emails/forgotpassword.html",{URL:url, firstName:users[0].firstName, year: now.getFullYear()})){
           res.status(200).json({message: "Password reset sent to email"});
         }else{
           res.status(500).json({message: "Unable to send email"});
