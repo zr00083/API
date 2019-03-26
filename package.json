@@ -24,10 +24,14 @@
   "dependencies": {
     "bcrypt": "^3.0.5",
     "express": "^4.16.4",
+    "hogan-express": "^0.5.2",
+    "hogan.js": "^3.0.2",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^1.6.5",
+    "nodemailer": "^5.1.1",
     "nodemon": "^1.18.10",
     "sequelize": "^5.1.0",
+    "sequelize-cli": "^5.4.0",
     "sqlite3": "^4.0.6",
     "uuid": "^3.3.2"
   }

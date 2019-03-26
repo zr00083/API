@@ -19,6 +19,15 @@ app.use(express.json());
 // to support URL-encoded bodies
 app.use(express.urlencoded({extended:true}));
 
+//set static files root
+app.use('/assets',express.static('assets/images'));
+app.use('/css',express.static('assets/css'));
+
+//set views directory
+app.set('view engine', 'html');
+app.engine('html', require('hogan-express'));
+app.set('views', './assets/views');
+
 //Use routes
 app.use('/users/', userRoutes);
 
