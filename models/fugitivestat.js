@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   FugitiveStat.associate = function(models) {
     // associations can be defined here
-    FugitiveStat.belongsTo(models.User);
+    FugitiveStat.belongsTo(models.User, {as: 'FugitiveStat', foreignKey: 'uid'});
   };
   return FugitiveStat;
 };
