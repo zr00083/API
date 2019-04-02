@@ -213,7 +213,7 @@ router.put('/:id', checkAuth, checkUserMatch, (req,res) => {
       if(users.length > 0){
         //check if the user is trying to update their password
         if(typeof req.body.password !== 'undefined' || typeof req.body.id !== 'undefined' || typeof req.body.createdAt !== 'undefined' || typeof req.body.updatedAt !== 'undefined' || typeof req.body.active !== 'undefined' || typeof req.body.verified !== 'undefined'){
-          res.status(400).json({message:"Cannot update that field"}); //send the response with the updated user
+          res.status(400).json({error:"Cannot update that field"}); //send the response with the updated user
         }else{ //if user is not trying to update their password
           //update the user without worrying about the password
           users[0].update(req.body)
