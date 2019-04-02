@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   BountyHunterStat.associate = function(models) {
     // associations can be defined here
-    BountyHunterStat.belongsTo(models.User);
+    BountyHunterStat.belongsTo(models.User, {as: 'BountyHunterStat', foreignKey: 'uid'});
   };
   return BountyHunterStat;
 };
