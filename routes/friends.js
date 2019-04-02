@@ -68,8 +68,6 @@ router.post('/:id/friend', checkAuth, (req,res) => {
         res.status(500).json({error:"Already following user"}); //throw a 404
       }
     });
-
-
 });
 
 router.delete('/:id/friend', checkAuth, (req, res) => {
@@ -80,17 +78,61 @@ router.delete('/:id/friend', checkAuth, (req, res) => {
   db.Friends.findAll( { where : { [Sequelize.Op.and] : {sender: sender_id, receiver: receiver_id } }} )
     .then((friends) => {
       if(friends.length > 0){ //if the length of the array is greater than 0 then
-        friends[0].destroy()
+        friends[0].destroy() //delete friend
           .then(() => {
-            res.status(200).json({message:"User unfriended"}); //send success
+            res.status(200).json({message:"User unfriended"}); //send success if deleted successfully
           })
           .catch(() =>{
-            res.status(500).json({error:"Unable to unfriend user"}); //throw a 500
+            res.status(500).json({error:"Unable to unfriend user"}); //throw a 500 if not deleted
           });
       }else{
-        res.status(500).json({error:"Unable to unfriend user"}); //throw a 500
+        res.status(500).json({error:"Unable to unfriend user"}); //throw a 500 if unable to get friends
       }
     })
+});
+
+router.post('/:id/block', checkAuth, (req,res) => {
+  //sender and recipient ids
+  var sender_id = req.userData.id
+  var receiver_id = req.params.id
+
+  //try and get the relationship from the friends table
+  db.Friends.findAll( { where : { [Sequelize.Op.and] : {sender: sender_id, receiver: receiver_id } }} )
+    .then((friends) => {
+      if(friends.length > 0){ //if the relationship is found
+        friends[0].update({blocked:true}) //update the user setting blocked to true
+          .then((updatedFriend) => { //if updated then
+            res.status(200).json({message:"User blocked"}); //send success
+          })
+          .catch(() => { //if not updated then
+            res.status(500).json({error:"Unable to block user"}); //throw a 404
+          })
+      }else{
+        res.status(404).json({error:"Friends not found"}); //throw a 404
+      }
+    });
+});
+
+router.delete('/:id/block', checkAuth, (req,res) => {
+  //sender and recipient ids
+  var sender_id = req.userData.id
+  var receiver_id = req.params.id
+
+  //try and get the relationship from the friends table
+  db.Friends.findAll( { where : { [Sequelize.Op.and] : {sender: sender_id, receiver: receiver_id } }} )
+    .then((friends) => {
+      if(friends.length > 0){ //if the relationship is found
+        friends[0].update({blocked:false}) //update the user setting blocked to false
+          .then((updatedFriend) => { //if updated then
+            res.status(200).json({message:"User unblocked"}); //send success
+          })
+          .catch(() => { //if not updated then
+            res.status(500).json({error:"Unable to unblock user"}); //throw a 404
+          })
+      }else{
+        res.status(404).json({error:"Friends not found"}); //throw a 404
+      }
+    });
 });
 
 //ROUTES END HERE
