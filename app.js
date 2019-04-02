@@ -13,6 +13,7 @@ const app = express();
 
 //Including routes
 const userRoutes = require('./routes/users');
+const friendsRoutes = require('./routes/friends');
 
 // to support JSON-encoded bodies
 app.use(express.json());
@@ -30,6 +31,7 @@ app.set('views', './assets/views');
 
 //Use routes
 app.use('/users/', userRoutes);
+app.use('/users/friends', friendsRoutes);
 
 //Root route with just a basic response to let people know this is the API
 app.get('/', (req, res) => {

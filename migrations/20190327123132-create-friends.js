@@ -10,11 +10,19 @@ module.exports = {
       },
       sender: {
         allowNull: false,
-        type: Sequelize.UUID
+        type: Sequelize.UUID,
+        references: {
+          model: 'Users',
+          key: 'id'
+        }
       },
       receiver: {
         allowNull: false,
-        type: Sequelize.UUID
+        type: Sequelize.UUID,
+        references: {
+          model:'Users',
+          key: 'id'
+        }
       },
       blocked: {
         allowNull: false,
