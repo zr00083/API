@@ -23,7 +23,7 @@ router.post('/:id/fugitive', checkAuth, (req, res) => {
   res.send('here');
 });
 
-router.post('/:id/bountyhunter', checkAuth, (req, res) => {
+router.post('/:id/fugitive', checkAuth, (req, res) => {
   res.send('here');
 });
 
