@@ -234,6 +234,50 @@ router.put('/:id', checkAuth, checkUserMatch, (req,res) => {
     })
 });
 
+//Change passsword user route
+router.put('/:id/changepassword', checkAuth, checkUserMatch, (req,res) => {
+  //search for user in database where id is the id provided
+  db.User.findAll({where:{id:req.params.id}})
+    .then((users) => {
+      //if the list of users is not empty then
+      if(users.length > 0){
+        //check the user has entered their password correctly
+        bcrypt.compare(req.body.password, users[0].password)
+          .then((result) => {
+            if(result){
+              //make new password hash
+              bcrypt.hash(req.body.newPassword, 10)
+                //if able to hash password
+                .then((hash) => {
+                  //try to delete user
+                  users[0].update({password:hash})
+                    .then((updatedUser) => { //if the user can be deleted
+                      res.status(200).json(updatedUser); //send response with deleted user
+                    })
+                    .catch(() => { //if the user can't be deleted
+                      res.status(500).json({error:"Unable to update password"}); //send response with error message
+                    });
+                })
+                .catch(() => {
+                  res.status(500).json({error:"Unable to hash new password"}); //send response with error message
+                });
+            }else{ //if the user hasn't entered their password correctly
+              res.status(401).json({error:"Authorization failed"});
+            }
+          })
+          .catch(() => { //if we can't hash the password
+            res.status(500).json({error:"Unable to update password"});
+          });
+      }else{ //if list is empty
+        //return user not found error
+        res.status(404).json({error:"User not found"});
+      }
+    })
+    .catch(() => {
+        res.status(500).json({error: "DB error"});
+    })
+});
+
 //Delete user route
 router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
   //search for user in database where id is the id provided
@@ -268,7 +312,6 @@ router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
     .catch(() => {
         res.status(500).json({error: "DB error"});
     })
-
 });
 
 
