@@ -132,7 +132,7 @@ router.post('/resetpassword/:token', (req,res) => {
               res.status(200).json({message:"Password reset"});
             }else{ //if user is not found
               //send a 404 error
-              res.status(401).json({error:"User not found"});
+              res.status(404).json({error:"User not found"});
             }
           })
           .catch(() => { // If db throws an error then handle it
