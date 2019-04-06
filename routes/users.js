@@ -272,9 +272,6 @@ router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
 });
 
 
-
-
-
 //ROUTES END HERE
 ////////////////////////////////////////////////////
 
