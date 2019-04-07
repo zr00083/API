@@ -14,8 +14,7 @@ module.exports = {
       },
       uid: {
         allowNull: false,
-        type: Sequelize.UUID,
-        unique:true
+        type: Sequelize.UUID
       },
       points: {
         allowNull: false,
