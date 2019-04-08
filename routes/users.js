@@ -280,6 +280,7 @@ router.put('/:id/changepassword', checkAuth, checkUserMatch, (req,res) => {
 
 //Delete user route
 router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
+  console.log(req.body);
   //search for user in database where id is the id provided
   db.User.findAll({where:{id:req.params.id}})
     .then((users) => {
@@ -294,7 +295,8 @@ router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
                 .then((deletedUser) => { //if the user can be deleted
                   res.status(204).json(deletedUser); //send response with deleted user
                 })
-                .catch(() => { //if the user can't be deleted
+                .catch((err) => { //if the user can't be deleted
+                  console.log("DB ERROR: " + err)
                   res.status(500).json({error:"Unable to delete user"}); //send response with error message
                 });
             }else{ //if the user hasn't entered their password correctly
@@ -302,6 +304,7 @@ router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
             }
           })
           .catch(() => { //if we can't hash the password
+          console.log("HASH ERROR: " + err)
             res.status(500).json({error:"Unable to delete user"});
           });
       }else{ //if list is empty
@@ -309,7 +312,8 @@ router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
         res.status(404).json({error:"User not found"});
       }
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log("DB ERROR: " + err)
         res.status(500).json({error: "DB error"});
     })
 });
