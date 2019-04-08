@@ -296,6 +296,7 @@ router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
                   res.status(204).json(deletedUser); //send response with deleted user
                 })
                 .catch(() => { //if the user can't be deleted
+                  console.log("HEREEEEE!!!!")
                   res.status(500).json({error:"Unable to delete user"}); //send response with error message
                 });
             }else{ //if the user hasn't entered their password correctly
