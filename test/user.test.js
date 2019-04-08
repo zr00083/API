@@ -23,16 +23,6 @@ describe("User", () => {
   });
 
   describe("Register", () =>{
-    it("should register a user", (done) => {
-      //example test
-      chai.request(app)
-        .get('/')
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          done();
-        });
-    });
 
     it("should register a user", (done) => {
       const User = {"firstName":"Kieran","lastName":"Rigby", "email":"blah@blah.com", "username":"testing","password":"test"};
