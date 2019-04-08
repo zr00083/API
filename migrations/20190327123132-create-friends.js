@@ -14,7 +14,9 @@ module.exports = {
         references: {
           model: 'Users',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       receiver: {
         allowNull: false,
@@ -22,7 +24,9 @@ module.exports = {
         references: {
           model:'Users',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       blocked: {
         allowNull: false,
