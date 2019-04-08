@@ -16,8 +16,8 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     User.hasMany(models.FugitiveStat, {as: "FugitiveStat", foreignKey: 'uid'});
     User.hasMany(models.BountyHunterStat, {as: "BountyHunterStat", foreignKey: 'uid'});
-    User.hasMany(models.Friends, {as: "following", foreignKey: 'sender'});
-    User.hasMany(models.Friends, {as: "followers", foreignKey: 'receiver'});
+    User.hasMany(models.Friends, {as: "following", foreignKey: 'sender',onDelete: 'cascade'});
+    User.hasMany(models.Friends, {as: "followers", foreignKey: 'receiver',onDelete: 'cascade'});
   };
   //Before every user is created, generate a uuid for them for their primary key.
   User.beforeCreate((user,opts) => {
