@@ -280,6 +280,7 @@ router.put('/:id/changepassword', checkAuth, checkUserMatch, (req,res) => {
 
 //Delete user route
 router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
+  console.log(req.body);
   //search for user in database where id is the id provided
   db.User.findAll({where:{id:req.params.id}})
     .then((users) => {
