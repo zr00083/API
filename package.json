@@ -4,7 +4,7 @@
   "description": "Web API for the bounty hunter backend",
   "main": "app.js",
   "scripts": {
-    "test": "mocha",
+    "test": "NODE_ENV=test mocha",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
