@@ -304,6 +304,7 @@ router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
             }
           })
           .catch(() => { //if we can't hash the password
+          console.log("HASH ERROR: " + err)
             res.status(500).json({error:"Unable to delete user"});
           });
       }else{ //if list is empty
@@ -311,7 +312,8 @@ router.delete('/:id', checkAuth, checkUserMatch, (req,res) => {
         res.status(404).json({error:"User not found"});
       }
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log("DB ERROR: " + err)
         res.status(500).json({error: "DB error"});
     })
 });
