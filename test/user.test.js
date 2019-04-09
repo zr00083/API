@@ -2,12 +2,7 @@
 const chai =  require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../app');
-
-//including helper functions
-const createUser = require('./helpers/create-user');
-
-//including test data
-const Users = require('./data/users');
+const bcrypt = require('bcrypt');
 
 //import database models
 const db = require('../models');
@@ -36,23 +31,14 @@ describe("User", () => {
   });
 
   describe("Register", () =>{
-    it("should register a user", (done) => {
-      //example test
-      chai.request(app)
-        .get('/')
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          done();
-        });
-    });
 
     it("should register a user", (done) => {
+      const User = {"firstName":"Kieran","lastName":"Rigby", "email":"blah@blah.com", "username":"testing","password":"test"};
       //example test
       chai.request(app)
         .post('/users')
         .set('content-type', 'application/json')
-        .send(Users.user1)
+        .send(User)
         .end((err, res) => {
           res.should.have.status(201);
           res.body.should.be.a('object');
@@ -69,6 +55,7 @@ describe("User", () => {
       createUser(Users.user1);
               const LoginCredentials = {"username":Users.user1.username, "password": Users.user1.password};
 
+
               chai.request(app)
                 .post('/users/login')
                 .set('content-type', 'application/json')
@@ -79,22 +66,12 @@ describe("User", () => {
                   res.body.should.have.property('token');
                   done();
                 });
-    });
-    it('should not login with an invalid username', (done) => {
-      createUser(Users.user1);
-      const LoginCredentials = {"username":"123", "password": Users.user1.password};
-      chai.request(app)
-        .post('/users/login')
-        .set('content-type', 'application/json')
-        .send(LoginCredentials)
-        .end((err,res) => {
-          res.should.have.status(404);
-          res.body.should.be.a('object');
-          res.body.should.have.property('error');
-          res.body.error.should.equal('Username not found');
-          done();
+
+            });
         });
+
     });
+
     it('should not login with an invalid password', (done) => {
     //  console.log(Users.user1);
       createUser(Users.user1);
@@ -111,5 +88,6 @@ describe("User", () => {
           done();
         });
     });
+
   });
 });
