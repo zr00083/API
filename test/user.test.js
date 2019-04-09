@@ -27,6 +27,14 @@ describe("User", () => {
     });
   });
 
+  afterEach(function(){
+    //delete all users
+    db.User.destroy({
+      where: {},
+      truncate: true
+    });
+  });
+
   describe("Register", () =>{
     it("should register a user", (done) => {
       //example test
@@ -57,6 +65,7 @@ describe("User", () => {
 
   describe("Login", () => {
     it('should login a user', (done) => {
+      console.log(Users.user1);
       createUser(Users.user1);
               const LoginCredentials = {"username":Users.user1.username, "password": Users.user1.password};
 
@@ -86,23 +95,21 @@ describe("User", () => {
           done();
         });
     });
+    it('should not login with an invalid password', (done) => {
+    //  console.log(Users.user1);
+      createUser(Users.user1);
+      const LoginCredentials = {"username":Users.user1.username, "password": "example1"};
+      chai.request(app)
+        .post('/users/login')
+        .set('content-type', 'application/json')
+        .send(LoginCredentials)
+        .end((err,res) => {
+          res.should.have.status(401);
+          res.body.should.be.a('object');
+          res.body.should.have.property('error');
+          res.body.error.should.equal('Incorrect Password');
+          done();
+        });
+    });
   });
 });
-
-
-// it("should NOT register a user", (done) => {
-//   let user = {
-//     firstName: "John",
-//     lastName: "Smith",
-//     email: "johnsmith@example.com",
-//     password:"john123"
-//   }
-//   chai.request(app)
-//   .get('/')
-//   .end((err, res) => {
-//     res.should.have.status(500);
-//     res.body.should.be.a('object');
-//     res.body.should.have.property('errors');
-//     res.body.errors.should.have.property('username');
-//   })
-// })
