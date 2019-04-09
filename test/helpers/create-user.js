@@ -10,7 +10,9 @@ var createUser = function(user) {
       //build the user object
       user.password = hash
       //create the user object
-      db.User.create(user);
+      db.User.create(user).catch((err) => {
+        console.log(err);
+      });
     });
 }
 
