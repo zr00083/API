@@ -18,14 +18,20 @@ chai.use(chaiHttp);
 chai.should();
 
 describe("User", () => {
-
-
+  
   //before each test for the users function
   beforeEach(function(){
-    // this.timeout(10000);
-    // console.log('before');
-    //delete all users
-     return db.User.truncate({});
+    //delete all data
+    return db.BountyHunterStat.truncate({})
+      .then(() => {
+        return db.FugitiveStat.truncate({})
+          .then(() => {
+            return db.Friends.truncate({})
+            .then(() => {
+              return db.User.truncate({});
+            });
+          });
+      });
   });
 
   describe("Register", () =>{
@@ -109,7 +115,7 @@ describe("User", () => {
   describe("Get User", () => {
     it("should get the user from database", (done) => {
       createUser(Users.user1).then((user) => {
-        const token = loginUser(user.id);
+        const token = loginUser(user);
         chai.request(app)
           .get('/users/me')
           .set('Authorization', 'Bearer ' + token)
