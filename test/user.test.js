@@ -9,6 +9,7 @@ const db = require('../models');
 
 //import helper functions
 const createUser = require('./helpers/create-user');
+const loginUser = require('./helpers/login-user')
 //import test data
 const Users = require('./data/users');
 
@@ -17,14 +18,20 @@ chai.use(chaiHttp);
 chai.should();
 
 describe("User", () => {
-
-
+  
   //before each test for the users function
   beforeEach(function(){
-    // this.timeout(10000);
-    // console.log('before');
-    //delete all users
-     return db.User.truncate({});
+    //delete all data
+    return db.BountyHunterStat.truncate({})
+      .then(() => {
+        return db.FugitiveStat.truncate({})
+          .then(() => {
+            return db.Friends.truncate({})
+            .then(() => {
+              return db.User.truncate({});
+            });
+          });
+      });
   });
 
   describe("Register", () =>{
@@ -103,4 +110,32 @@ describe("User", () => {
     });
 
   });
+
+
+  describe("Get User", () => {
+    it("should get the user from database", (done) => {
+      createUser(Users.user1).then((user) => {
+        const token = loginUser(user);
+        chai.request(app)
+          .get('/users/me')
+          .set('Authorization', 'Bearer ' + token)
+          .end((err,res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('firstName');
+            res.body.should.have.property('lastName');
+            res.body.should.have.property('email');
+            res.body.should.have.property('username');
+            res.body.should.have.property('password');
+            res.body.should.have.property('id');
+            done();
+          });
+      });
+    });
+
+  });
+
+
+
+
 });
