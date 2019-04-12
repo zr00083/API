@@ -3,15 +3,17 @@ const bcrypt = require('bcrypt');
 //import database models
 const db = require('../../models');
 
-var createUser = function(user) {
+const createUser = async function(user) {
   //hash the password "test"
-  bcrypt.hash(user.password, 10)
+  return bcrypt.hash(user.password, 10)
     .then((hash) => {
-      //build the user object
-      user.password = hash
       //create the user object
-      db.User.create(user).catch((err) => {
-        console.log(err);
+      return db.User.create({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        username: user.username,
+        password: hash
       });
     });
 }
