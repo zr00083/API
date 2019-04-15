@@ -59,8 +59,53 @@ describe("Fugitive Statistics", () => {
             })
         });
     })
-  });
+    /*
+    it('should get the BountyHunter stats for the user', (done) => {
+      createUser(Users.user2)
+      .then((created_user) => {
+        createStat("bountyhunter", created_user, Stats.BountyHunter.stat2)
+        .then(() => {
+          const token = loginUser(created_user);
+          chai.request(app)
+          .get('users/stats'+created_user.id+"/bountyhunter")
+          .set('Authorization', 'Bearer ' + token)
+          .end((err,res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+      //      res.body.should.have.property('Stats');
+            res.body.stats.should.have.length(1);
+            done();
+          });
+        })
+      });
+  })
+  */
+})
 
+/*
+  it('should get the BountyHunter stats for the user'), (done) => {
+    createUser(Users.user2)
+    .then(created_user) => {
+      createStat("bountyhunter", created_user, Stats.BountyHunter.stat2)
+      .then() => {
+        const token = loginUser(created_user);
+        chai.request(app)
+        .get('users/stats'+created_user.id+"/bountyhunter")
+        .set('Authorization', 'Bearer ' + token)
+        .end((err.res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('stats');
+          res.body.stats.should.have.length(1);
+          done();
+        });
+
+      })
+    });
+  })
+
+
+*/
   describe("Make Statistics", () =>{
 
   });

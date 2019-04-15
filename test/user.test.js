@@ -18,7 +18,7 @@ chai.use(chaiHttp);
 chai.should();
 
 describe("User", () => {
-  
+
   //before each test for the users function
   beforeEach(function(){
     //delete all data
