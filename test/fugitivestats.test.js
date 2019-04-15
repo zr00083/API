@@ -58,7 +58,14 @@ describe("Fugitive Statistics", () => {
                 });
             })
         });
+
+
+
+
     })
+
+
+
     /*
     it('should get the BountyHunter stats for the user', (done) => {
       createUser(Users.user2)
@@ -107,7 +114,20 @@ describe("Fugitive Statistics", () => {
 
 */
   describe("Make Statistics", () =>{
-
+    it("creates a fugitive stat for the user", (done) => {
+      //example test
+      chai.request(app)
+        .post('/users/stats/'+created_user.id+"/fugitive")
+        .get('/users/stats/'+created_user.id+"/fugitive")
+        .set('content-type', 'application/json')
+        .send(Users.user1)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('created');
+          done();
+        });
+    });
   });
 
 });

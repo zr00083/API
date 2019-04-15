@@ -62,7 +62,20 @@ describe("Bounty Hunter Statistics", () => {
   });
 
   describe("Make Statistics", () =>{
-
+    it("creates bounty hunter stats for the user", (done) => {
+      //example test
+      chai.request(app)
+        .post('/users/stats/'+created_user.id+"/bountyhunter")
+        .get('/users/stats/'+created_user.id+"/bountyhunter")
+        .set('content-type', 'application/json')
+        .send(Users.user1)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('created');
+          done();
+        });
+    });
   });
 
 });
