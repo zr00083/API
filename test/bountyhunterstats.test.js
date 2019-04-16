@@ -34,7 +34,7 @@ describe("Bounty Hunter Statistics", () => {
           });
       });
   });
-
+//GET /users/stats/:id/bountyhunter - gets the bountyhunter stats of the user
   describe("Get Statistics", () =>{
     it('should get all bounty hunter statistics for user', (done) => {
       //create a user
@@ -59,7 +59,69 @@ describe("Bounty Hunter Statistics", () => {
             })
         });
     });
+    it('if user account is not found', (done) => {
+            createUser(Users.user1)
+        .then((created_user) => {
+                createStat("bountyhunter", created_user, Stats.BountyHunter.stat1)
+            .then(() => {
+                    const token = loginUser(created_user);
+                  chai.request(app)
+                .get('/users/stats/'+created_user.id+"/bountyhunter")
+                .set('Authorization', 'Bearer ' + token)
+                .end((err,res) => {
+                  res.should.have.status(404);
+                  res.body.should.be.a('object');
+                  res.body.should.have.property('{error: "User not found"}');
+                  res.body.stats.should.have.length(1);
+                  done();
+                });
+            })
+        });
+    });
+    it('if user stats are not retrieved', (done) => {
+            createUser(Users.user1)
+        .then((created_user) => {
+                createStat("bountyhunter", created_user, Stats.BountyHunter.stat1)
+            .then(() => {
+                    const token = loginUser(created_user);
+                  chai.request(app)
+                .get('/users/stats/'+created_user.id+"/bountyhunter")
+                .set('Authorization', 'Bearer ' + token)
+                .end((err,res) => {
+                  res.should.have.status(500);
+                  res.body.should.be.a('object');
+                  res.body.should.have.property('{error: "Unable to retrieve fugitive stats"}');
+                  res.body.stats.should.have.length(1);
+                  done();
+                });
+            })
+        });
+    });
+    it('if user is not Authenticated', (done) => {
+            createUser(Users.user1)
+        .then((created_user) => {
+                createStat("bountyhunter", created_user, Stats.BountyHunter.stat1)
+            .then(() => {
+                    const token = loginUser(created_user);
+                  chai.request(app)
+                .get('/users/stats/'+created_user.id+"/bountyhunter")
+                .set('Authorization', 'Bearer ' + token)
+                .end((err,res) => {
+                  res.should.have.status(401);
+                  res.body.should.be.a('object');
+                  res.body.should.have.property('{error: "Authorization failed"}');
+                  res.body.stats.should.have.length(1);
+                  done();
+                });
+            })
+        });
+    });
+
+
   });
+
+
+  //bountyhunter stats for the user POST /users/stats/:id/bountyhunter
 
   describe("Make Statistics", () =>{
     it("creates bounty hunter stats for the user", (done) => {
@@ -73,6 +135,48 @@ describe("Bounty Hunter Statistics", () => {
           res.should.have.status(200);
           res.body.should.be.a('object');
           res.body.should.have.property('created');
+          done();
+        });
+    });
+    it("if user account is not found", (done) => {
+      //example test
+      chai.request(app)
+        .post('/users/stats/'+created_user.id+"/bountyhunter")
+        .get('/users/stats/'+created_user.id+"/bountyhunter")
+        .set('content-type', 'application/json')
+        .send(Users.user1)
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.a('object');
+          res.body.should.have.property('error: "User not found"}');
+          done();
+        });
+    });
+    it("if user stat is not created", (done) => {
+      //example test
+      chai.request(app)
+        .post('/users/stats/'+created_user.id+"/bountyhunter")
+        .get('/users/stats/'+created_user.id+"/bountyhunter")
+        .set('content-type', 'application/json')
+        .send(Users.user1)
+        .end((err, res) => {
+          res.should.have.status(500);
+          res.body.should.be.a('object');
+          res.body.should.have.property('{error: "Unable to create fugitive stats"}');
+          done();
+        });
+    });
+    it("user is not Authenticated", (done) => {
+      //example test
+      chai.request(app)
+        .post('/users/stats/'+created_user.id+"/bountyhunter")
+        .get('/users/stats/'+created_user.id+"/bountyhunter")
+        .set('content-type', 'application/json')
+        .send(Users.user1)
+        .end((err, res) => {
+          res.should.have.status(401);
+          res.body.should.be.a('object');
+          res.body.should.have.property('{error: "Authorization failed"}');
           done();
         });
     });
