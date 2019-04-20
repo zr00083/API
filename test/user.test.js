@@ -401,6 +401,7 @@ describe("User", () => {
             .set('Authorization', 'Bearer ' + token) //sets the logged in user to authorized
             .set('content-type', 'application/json') //sets the request body to json
             .end((err,res) => {
+            console.log(res)
             res.should.have.status(500); //response should have status code 500
             res.body.should.have.property('error'); //response should have the property error
             done();
@@ -448,9 +449,6 @@ describe("User", () => {
   });
 
 
-<<<<<<< HEAD
-
-=======
   //Change user password Tests
   describe("Change user password", () => {
     it("should change user password", (done) => {
@@ -534,5 +532,4 @@ describe("User", () => {
         });
     });
   });
->>>>>>> upstream/test
 });

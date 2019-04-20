@@ -1,4 +1,6 @@
+
 //import all necessary librarys
+
 const chai =  require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../app');
@@ -10,7 +12,10 @@ const db = require('../models');
 const createUser = require('./helpers/create-user');
 const loginUser = require('./helpers/login-user');
 const createFriend = require('./helpers/create-friends');
+const deleteUser = require('./helpers/delete-user');
 //import data
+
+
 const Users = require('./data/users');
 
 //configure chai
@@ -64,6 +69,11 @@ describe("Friends", () => {
             });
         })
     });
+  });
+});
+
+
+    /*
     it('if user account is not found', (done) => {
                   chai.request(app)
                 .get('/users/friends/'+created_user1.id+"/following")
@@ -215,7 +225,7 @@ REQUIRES AUTHORIZATION
 - returns 500 if user already friended. (response will be {error: "Already following user"})
 - returns 401 if user is NOT Authenticated (response will be
 {error: "Authorization failed"})
-*/
+
 
 
 
@@ -289,7 +299,7 @@ REQUIRES AUTHORIZATION
   - returns 500 if user NOT unfriended. (response will be {error: "Unable to unfriend user"})
   - returns 401 if user is NOT Authenticated (response will be
   {error: "Authorization failed"})
-    */
+    *
     describe('Sender to unfriend the user with ID', () => {
           it('User is unfriended', (done) => {
                     chai.request(app)
@@ -339,7 +349,7 @@ REQUIRES AUTHORIZATION
 {error: "Authorization failed"})
 
 
-*/
+*
   describe("Add Block", () =>{
     it("the sender of this request will block the user with id", (done) => {
 
@@ -450,3 +460,4 @@ REQUIRES AUTHORIZATION
                       });
                 });
   });
+  */

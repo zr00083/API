@@ -1,7 +1,9 @@
 //import all necessary librarys
+
 const chai =  require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../app');
+const bcrypt = require('bcrypt');
 
 //import database models
 const db = require('../models');
@@ -10,6 +12,8 @@ const db = require('../models');
 const createUser = require('./helpers/create-user');
 const loginUser = require('./helpers/login-user');
 const createStat = require('./helpers/create-stat');
+const deleteUser = require('./helpers/delete-user');
+
 //import data
 const Users = require('./data/users');
 const Stats = require('./data/stats');
@@ -59,6 +63,42 @@ describe("Bounty Hunter Statistics", () => {
             })
         });
     });
+  });
+  it('if user account is not found', (done) => {
+    createUser(Users.user1)
+    .then(function(created_user) {
+      const token = loginUser(created_user);
+      deleteUser(created_user)
+      .then(function() {
+      chai.request(app)
+      .get('/users/stats/'+created_user.id+"/bountyhunter")
+      .set('Authorization', 'Bearer ' + token)
+      .end((err,res) => {
+        res.should.have.status(404)
+        res.body.should.have.property('error');
+        res.body.error.should.equal('User not found')
+        done();
+      });
+    });
+  });
+});
+
+});
+
+/*
+GET /users/stats/:id/bountyhunter - gets the bountyhunter stats of the user
+REQUIRES AUTHORIZATION
+- returns 200 if stats retrieved (response will be stats)
+- returns 404 if user account is not found. (response will be {error: "User not found"})
+- returns 500 if user stats NOT retrieved. (response will be {error: "Unable to retrieve fugitive stats"})
+- returns 401 if user is NOT Authenticated (response will be
+{error: "Authorization failed"})
+
+
+
+
+
+
     it('if user account is not found', (done) => {
             createUser(Users.user1)
         .then((created_user) => {
@@ -183,3 +223,4 @@ describe("Bounty Hunter Statistics", () => {
   });
 
 });
+*/
