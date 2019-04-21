@@ -64,7 +64,7 @@ describe("Bounty Hunter Statistics", () => {
         });
     });
   });
-  it('if user account is not found', (done) => {
+  it("Shouldn't get the statistics of the user", (done) => {
     createUser(Users.user1)
     .then(function(created_user) {
       const token = loginUser(created_user);
@@ -74,12 +74,27 @@ describe("Bounty Hunter Statistics", () => {
       .get('/users/stats/'+created_user.id+"/bountyhunter")
       .set('Authorization', 'Bearer ' + token)
       .end((err,res) => {
-        res.should.have.status(404)
-        res.body.should.have.property('error');
-        res.body.error.should.equal('User not found')
+        res.should.have.status(200);
+        res.body.should.have.property('stats');
+        res.body.stats.should.have.length(0);
         done();
       });
     });
+  });
+});
+it("shouldn't bounty hunter stats if user is not authenticated", (done) => {
+  createUser(Users.user1).then((user) => { //create user using user1 details from data/users.js
+    const token = loginUser(user); //logs in created user1
+    chai.request(app)
+      .get('/users/stats/'+user.id+"/bountyhunter") //get request
+      .set('content-type', 'application/json') //sets the request body to json
+      .end((err,res) => {
+        res.should.have.status(401); //response should have status code 401
+        res.body.should.be.a('object'); //response should be an object
+        res.body.should.have.property('error'); //response should have the property error
+        res.body.error.should.equal('Authorization failed'); //response should equal authorization failed
+        done();
+      });
   });
 });
 

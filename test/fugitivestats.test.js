@@ -57,59 +57,37 @@ describe("Fugitive Statistics", () => {
                   res.body.should.be.a('object'); //body should be a JSON object
                   res.body.should.have.property('stats'); //and have property users
                   res.body.stats.should.have.length(1); //should have 1 statistic for the user
-
                   done();
                 });
             });
         });
       });
-
   it('If user account is not found', (done) => {
-    const user1  = Users.user1;
-      createUser(user1)
-      .then(function(created_user1){
-      const token = loginUser(user);
-      deleteUser(user)
+    const user1 = Users.user1; //sets user1 equal to user1 details from data/users.js
+    createUser(user1) //creates user1
+      .then(function(created_user1) {
+      const token = loginUser(created_user1);
+      deleteUser(created_user1)
       .then(function() {
             chai.request(app)
-              .get('/users/stats/'+created_user.id+"/fugitive") //GET /users/stats/:id/fugitive
+              .get('/users/stats/'+created_user1.id+"/fugitive") //GET /users/stats/:id/fugitive
               .set('Authorization', 'Bearer ' + token) //set authorization token to the token
               .set('content-type', 'application/json')
-              .end((err) => {
-                res.should.have.status(404); //should have 200 response code
+              .end((err, res) => {
+                res.should.have.status(200); //should have 200 response code
                 res.body.should.be.a('object'); //body should be a JSON object
-                res.body.should.have.property('Error'); //and have property users
-                res.body.should.have.property('User not found');
+                res.body.should.have.property('stats'); //and have property users
+                res.body.stats.should.have.length(0);
                 done();
               });
           });
       });
     });
-    it("If user stats NOT retrieved", (done) => {
-      const user1  = Users.user1;
-        createUser(user1)
-        .then(function(created_user1){
-        const token = loginUser(user);
-        deleteUser(user)
-        .then(function() {
-      chai.request(app)
-        .get('/users/stats/'+created_user.id+"/fugitive") //post request
-        .set('content-type', 'application/json') //sets the request body to json
-        .end((err, res) => {
-          res.should.have.status(500); //response should have status code 500
-          res.body.should.be.a('object'); //response should be an object
-          res.body.should.have.property('error'); //response should have the property error
-          res.body.error.should.equal('Unable to retrieve fugitives stats'); //response should equal unable to create user
-          done();
-        });
-    });
-});
-});
 it("shouldn't get Fugitive Stats is not authenticated", (done) => {
   createUser(Users.user1).then((user) => { //create user using user1 details from data/users.js
     const token = loginUser(user); //logs in created user1
     chai.request(app)
-      .get('/users/me') //get request
+      .get('/users/stats/'+user.id+"/fugitive") //get request
       .set('content-type', 'application/json') //sets the request body to json
       .end((err,res) => {
         res.should.have.status(401); //response should have status code 401
@@ -122,7 +100,6 @@ it("shouldn't get Fugitive Stats is not authenticated", (done) => {
 });
 });
 });
-
 
 
 
@@ -366,7 +343,7 @@ it("shouldn't get Fugitive Stats is not authenticated", (done) => {
           done();
         });
     });
-  });
 
-});
+
+
 */
