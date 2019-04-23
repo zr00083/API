@@ -17,12 +17,13 @@ const deleteUser = require('./helpers/delete-user');
 
 
 const Users = require('./data/users');
+const Stats = require('./data/stats')
 
 //configure chai
 chai.use(chaiHttp);
 chai.should();
 
-describe("Friends", () => {
+describe("Friends followers", () => {
 
   //before each test for the users function
   beforeEach(function(){
@@ -103,7 +104,7 @@ describe("Friends", () => {
 
 
 //GET /users/friends/:id/following - gets the list of all users who the user has friended.
-  describe("Add Friends", () =>{
+  describe("Friends following", () =>{
     it('get the list of players that user1 is following', (done) => {
       //load user test data
       const user1 = Users.user1;
@@ -168,20 +169,152 @@ it("should the user not be authenticated", (done) => {
 });
       });
 
+    describe("Add friends", () => {
+      it("should user be added", (done) => {
+        createUser(Users.user1).then((user) => {
+          createFriends(Friends.friend1).then((friend) => {
+            const token = loginUser(user);
+            chai.request(app)
+            .post('/users/friends/'+friend1.id+"friend")
+            .set('Authorization', 'Bearer ' + token)
+            .set('content-type', 'application/json')
+            .end((err,res) => {
+              res.should.have.status(200);
+              res.body.should.be.a('object');
+              res.body.should.have.property('User friended');
+              done()
+          });
+
+
+
+
+});
+});
+});
+});
+
+it('should the user account not be found', (done) => {
+  createUser(Users.user2).then((user) => { //create user using user2 details from data/users.js
+    const token = loginUser(user); //logs in created user1
+    deleteUser(user) //deletes user1
+      .then(function() {
+        chai.request(app)
+        .post('/users/friends/'+user.id+"/friend")
+        .set('Authorization', 'Bearer ' + token) //sets the logged in user to authorized
+        .set('content-type', 'application/json') //sets the request body to json
+        .end((err,res) => {
+          res.should.have.status(404); //response should have status code 404
+          res.body.should.have.property('error');
+          res.body.error.should.equal('User not found');
+          done();
+});
+});
+});
+});
+it('should user is already followed', (done) => {
+    const user1 = Users.user1;
+    const user2 = Users.user2;
+    createUser(user2)
+      .then((created_user2) => {
+        createUser(user1)
+          .then((created_user1) =>{
+            createFriend(created_user1, created_user2,0)
+                const token = loginUser(created_user1);
+              chai.request(app)
+        .post('/users/friends/'+created_user2.id+"/friend")
+        .set('Authorization', 'Bearer ' + token) //sets the logged in user to authorized
+        .set('content-type', 'application/json') //sets the request body to json
+        .end((err,res) => {
+          res.should.have.status(500); //response should have status code 404
+          res.body.should.have.property('error');
+          res.body.error.should.equal('Already following user');
+          done();
+
+});
+
+});
+});
+});
+
+it("should the user not be authenticated", (done) => {
+  createUser(Users.user1).then((user) => { //create user using user1 details from data/users.js
+    const token = loginUser(user); //logs in created user1
+    chai.request(app)
+      .post('/users/friends/'+user.id+"/friend")
+      .set('content-type', 'application/json') //sets the request body to json
+      .end((err,res) => {
+        res.should.have.status(401); //response should have status code 401
+        res.body.should.be.a('object'); //response should be an object
+        res.body.should.have.property('error'); //response should have the property error
+        res.body.error.should.equal('Authorization failed'); //response should equal authorization failed
+        done();
+
+});
+});
+
+});
+
+
+   describe("")
+
+
+
+});
+
+
+
+describe("Remove Friends", () =>{
+  /*
+  DELETE /users/friends/:id/friend - the sender of this request will unfriend the user with id :id.
+REQUIRES AUTHORIZATION
+- returns 200 if user unfriended (response will be {message: "User unfriended"})
+- returns 404 if user account is not found. (response will be {error: "User not found"})
+- returns 500 if user NOT unfriended. (response will be {error: "Unable to unfriend user"})
+- returns 401 if user is NOT Authenticated (response will be
+{error: "Authorization failed"})
+  *
+  describe('Sender to unfriend the user with ID', () => {
+        it('User is unfriended', (done) => {
+                  chai.request(app)
+                  .delete('/users/friend/' + friend.id)
+            //   .post('/users/stats/'+created_user.id+"/bountyhunter")
+                  .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('message: "User unfriended"!');
+                    done();
+                  });
+            });
+        });
+        it('User account cannot be found', (done) => {
+                  chai.request(app)
+                  .delete('/users/friend/' + friend.id)
+            //   .post('/users/stats/'+created_user.id+"/bountyhunter")
+                  .end((err, res) => {
+                        res.should.have.status(404);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('message: "User unfriended"!');
+                    done();
+                  });
+            });
+            it('User account cannot be found', (done) => {
+                      chai.request(app)
+                      .delete('/users/friend/' + friend.id)
+                //   .post('/users/stats/'+created_user.id+"/bountyhunter")
+                      .end((err, res) => {
+                            res.should.have.status(404);
+                            res.body.should.be.a('object');
+                            res.body.should.have.property('message: "User unfriended"!');
+                        done();
+                      });
+                });
+
+});
 
 
 
 
 
-
-
-
-
-
-
-
-
-    });
 
 
 
@@ -403,53 +536,6 @@ REQUIRES AUTHORIZATION
   });
 
 
-  describe("Remove Friends", () =>{
-    /*
-    DELETE /users/friends/:id/friend - the sender of this request will unfriend the user with id :id.
-  REQUIRES AUTHORIZATION
-  - returns 200 if user unfriended (response will be {message: "User unfriended"})
-  - returns 404 if user account is not found. (response will be {error: "User not found"})
-  - returns 500 if user NOT unfriended. (response will be {error: "Unable to unfriend user"})
-  - returns 401 if user is NOT Authenticated (response will be
-  {error: "Authorization failed"})
-    *
-    describe('Sender to unfriend the user with ID', () => {
-          it('User is unfriended', (done) => {
-                    chai.request(app)
-                    .delete('/users/friend/' + friend.id)
-              //   .post('/users/stats/'+created_user.id+"/bountyhunter")
-                    .end((err, res) => {
-                          res.should.have.status(200);
-                          res.body.should.be.a('object');
-                          res.body.should.have.property('message: "User unfriended"!');
-                      done();
-                    });
-              });
-          });
-          it('User account cannot be found', (done) => {
-                    chai.request(app)
-                    .delete('/users/friend/' + friend.id)
-              //   .post('/users/stats/'+created_user.id+"/bountyhunter")
-                    .end((err, res) => {
-                          res.should.have.status(404);
-                          res.body.should.be.a('object');
-                          res.body.should.have.property('message: "User unfriended"!');
-                      done();
-                    });
-              });
-              it('User account cannot be found', (done) => {
-                        chai.request(app)
-                        .delete('/users/friend/' + friend.id)
-                  //   .post('/users/stats/'+created_user.id+"/bountyhunter")
-                        .end((err, res) => {
-                              res.should.have.status(404);
-                              res.body.should.be.a('object');
-                              res.body.should.have.property('message: "User unfriended"!');
-                          done();
-                        });
-                  });
-
-  });
 
 
 /*
