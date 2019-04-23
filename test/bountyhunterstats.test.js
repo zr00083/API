@@ -99,8 +99,51 @@ it("shouldn't bounty hunter stats if user is not authenticated", (done) => {
 });
 
 });
+/*
+describe("Makes statistics", () => {
+  it('should stats be created', (done) => {
+    createUser(Users.user1)
+      .then((created_user) => {
+        createStat("bountyhunter", created_user, Stats.BountyHunter.stat1)
+          .then(() => {
+          const token = loginUser(created_user);
+            chai.request(app)
+              .post('/users/stats/'+created_user.id+"/bountyhunter") //GET /users/stats/:id/bountyhunter
+              .set('Authorization', 'Bearer ' + token) //set authorization token to the token
+              .end((err,res) => {
+                res.should.have.status(200); //should have 200 response code
+                res.body.should.be.a('object'); //body should be a JSON object
+                res.body.should.have.property('stat created'); //and have property users
+                res.body.stats.should.have.length(1); //should have 1 statistic for the user
+                done();
+  });
+});
+});
+});
+});
+
+
+
+
+
+
 
 /*
+
+THIS CODE RETURNS 404
+it("Should stats be created", (done) => {
+        chai.request(app)
+    .post('/users/stats/bountyhunter') //GET /users/stats/:id/bountyhunter
+    .set('Authorization', 'Bearer ')
+    .set('Content-Type', 'application/json')
+//    .send(createStat) //set authorization token to the token
+    .end((err,res) => {
+      res.should.have.status(200); //should have 200 response code
+      res.body.should.be.a('object'); //body should be a JSON object
+      res.body.should.have.property('Stat created'); //and have property users
+      done();
+
+
 GET /users/stats/:id/bountyhunter - gets the bountyhunter stats of the user
 REQUIRES AUTHORIZATION
 - returns 200 if stats retrieved (response will be stats)

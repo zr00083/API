@@ -38,6 +38,70 @@ describe("Friends", () => {
           });
       });
   });
+  it('Should get the list of players that user1 is followed by', (done) => {
+    //load user test data
+    const user1 = Users.user1;
+    const user2 = Users.user2;
+    //create user 2
+    createUser(user2)
+      .then((created_user2) => {
+        //create user 1
+        createUser(user1)
+          .then((created_user1) =>{
+            //create user 1 following user 2
+            createFriend(created_user1, created_user2,0)
+              .then(() => {
+                //log in user 1
+                const token = loginUser(created_user1);
+                //attempt to get friends using the API
+                chai.request(app)
+                  .get('/users/friends/'+created_user1.id+"/followers") //GET /users/friends/:id/following
+                  .set('Authorization', 'Bearer ' + token) //set authorization token to the token
+                  .end((err,res) => {
+                    res.should.have.status(200); //should have 200 response code
+                    res.body.should.be.a('object'); //body should be a JSON object
+                    res.body.should.have.property('users'); //and have property users
+                    done();
+                  });
+              });
+          });
+      })
+  });
+  it('should the user account not be found', (done) => {
+    createUser(Users.user2).then((user) => { //create user using user2 details from data/users.js
+      const token = loginUser(user); //logs in created user1
+      deleteUser(user) //deletes user1
+        .then(function() {
+          chai.request(app)
+          .get('/users/friends/'+user.id+"/followers")
+          .set('Authorization', 'Bearer ' + token) //sets the logged in user to authorized
+          .set('content-type', 'application/json') //sets the request body to json
+          .end((err,res) => {
+            res.should.have.status(200); //response should have status code 404
+            res.body.should.be.a('object'); //response should be an object
+            res.body.should.have.property( 'users'); //response should have the property error
+            done();
+  });
+  });
+  });
+  });
+  it("should the user not be authenticated", (done) => {
+  createUser(Users.user1).then((user) => { //create user using user1 details from data/users.js
+  const token = loginUser(user); //logs in created user1
+  chai.request(app)
+    .get('/users/friends/'+user.id+"/followers")
+    .set('content-type', 'application/json') //sets the request body to json
+    .end((err,res) => {
+      res.should.have.status(401); //response should have status code 401
+      res.body.should.be.a('object'); //response should be an object
+      res.body.should.have.property('error'); //response should have the property error
+      res.body.error.should.equal('Authorization failed'); //response should equal authorization failed
+      done();
+  });
+  });
+  });
+
+
 //GET /users/friends/:id/following - gets the list of all users who the user has friended.
   describe("Add Friends", () =>{
     it('get the list of players that user1 is following', (done) => {
@@ -69,8 +133,57 @@ describe("Friends", () => {
             });
         })
     });
-  });
+    it('should the user account not be found', (done) => {
+      createUser(Users.user2).then((user) => { //create user using user2 details from data/users.js
+        const token = loginUser(user); //logs in created user1
+        deleteUser(user) //deletes user1
+          .then(function() {
+            chai.request(app)
+            .get('/users/friends/'+user.id+"/following")
+            .set('Authorization', 'Bearer ' + token) //sets the logged in user to authorized
+            .set('content-type', 'application/json') //sets the request body to json
+            .end((err,res) => {
+              res.should.have.status(200); //response should have status code 404
+              res.body.should.be.a('object'); //response should be an object
+              res.body.should.have.property( 'users'); //response should have the property error
+              done();
+    });
 });
+});
+});
+it("should the user not be authenticated", (done) => {
+  createUser(Users.user1).then((user) => { //create user using user1 details from data/users.js
+    const token = loginUser(user); //logs in created user1
+    chai.request(app)
+      .get('/users/friends/'+user.id+"/following")
+      .set('content-type', 'application/json') //sets the request body to json
+      .end((err,res) => {
+        res.should.have.status(401); //response should have status code 401
+        res.body.should.be.a('object'); //response should be an object
+        res.body.should.have.property('error'); //response should have the property error
+        res.body.error.should.equal('Authorization failed'); //response should equal authorization failed
+        done();
+});
+});
+});
+      });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    });
+
+
 
 
     /*
