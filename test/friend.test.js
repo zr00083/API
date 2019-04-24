@@ -18,6 +18,7 @@ const deleteUser = require('./helpers/delete-user');
 
 const Users = require('./data/users');
 const Stats = require('./data/stats')
+// const Friends = require('/data/friends')
 
 //configure chai
 chai.use(chaiHttp);
@@ -253,18 +254,7 @@ it("should the user not be authenticated", (done) => {
 });
 
 });
-
-
-   describe("")
-
-
-
-});
-
-
-
-describe("Remove Friends", () =>{
-  /*
+/*
   DELETE /users/friends/:id/friend - the sender of this request will unfriend the user with id :id.
 REQUIRES AUTHORIZATION
 - returns 200 if user unfriended (response will be {message: "User unfriended"})
@@ -272,47 +262,28 @@ REQUIRES AUTHORIZATION
 - returns 500 if user NOT unfriended. (response will be {error: "Unable to unfriend user"})
 - returns 401 if user is NOT Authenticated (response will be
 {error: "Authorization failed"})
-  *
-  describe('Sender to unfriend the user with ID', () => {
-        it('User is unfriended', (done) => {
-                  chai.request(app)
-                  .delete('/users/friend/' + friend.id)
-            //   .post('/users/stats/'+created_user.id+"/bountyhunter")
-                  .end((err, res) => {
-                        res.should.have.status(200);
-                        res.body.should.be.a('object');
-                        res.body.should.have.property('message: "User unfriended"!');
-                    done();
-                  });
+  */
+  describe('"Remove Friends"', () => {
+        it('Should User unfriend', (done) => {
+          createUser(Users.user2).then((user) => {
+          const token = loginUser(user);
+          deleteUser(user)
+          .then(function() {
+            chai.request(app)
+              .delete('/users/friends'+created_user2.id+"/friend") //delete request
+              .set('Authorization', 'Bearer ' + token) //sets the logged in user to authorized
+              .set('content-type', 'application/json') //sets the request body to json
+              .end((err,res) => {
+              res.should.have.status(200); //response should have status code 204
+              res.body.should.have.property('message');
+              res.body.error.should.equal('User unfriended');
+                done();
             });
+          });
         });
-        it('User account cannot be found', (done) => {
-                  chai.request(app)
-                  .delete('/users/friend/' + friend.id)
-            //   .post('/users/stats/'+created_user.id+"/bountyhunter")
-                  .end((err, res) => {
-                        res.should.have.status(404);
-                        res.body.should.be.a('object');
-                        res.body.should.have.property('message: "User unfriended"!');
-                    done();
-                  });
-            });
-            it('User account cannot be found', (done) => {
-                      chai.request(app)
-                      .delete('/users/friend/' + friend.id)
-                //   .post('/users/stats/'+created_user.id+"/bountyhunter")
-                      .end((err, res) => {
-                            res.should.have.status(404);
-                            res.body.should.be.a('object');
-                            res.body.should.have.property('message: "User unfriended"!');
-                        done();
-                      });
-                });
-
-});
-
-
-
+      });
+    });
+  });
 
 
 
@@ -461,7 +432,41 @@ describe("list of users who have added the user as a Friend", () =>{
 
 
   });
+  chai.request(app)
+  .delete('/users/friend/' + friend.id)
+//   .post('/users/stats/'+created_user.id+"/bountyhunter")
+  .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.be.a('object');
+        res.body.should.have.property('message: "User unfriended"!');
+    done();
+  });
+});
+});
+it('User account cannot be found', (done) => {
+  chai.request(app)
+  .delete('/users/friend/' + friend.id)
+//   .post('/users/stats/'+created_user.id+"/bountyhunter")
+  .end((err, res) => {
+        res.should.have.status(404);
+        res.body.should.be.a('object');
+        res.body.should.have.property('message: "User unfriended"!');
+    done();
+  });
+});
+it('User account cannot be found', (done) => {
+      chai.request(app)
+      .delete('/users/friend/' + friend.id)
+//   .post('/users/stats/'+created_user.id+"/bountyhunter")
+      .end((err, res) => {
+            res.should.have.status(404);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message: "User unfriended"!');
+        done();
+      });
+});
 
+});
 /*
 POST /users/friends/:id/friend - the sender of this request will friend the user with id :id.
 REQUIRES AUTHORIZATION
